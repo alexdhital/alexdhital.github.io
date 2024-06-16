@@ -11,7 +11,7 @@ I am Alex Dhital, a passionate Penetration Tester and Red Teamer with a strong p
 ### Certifications
 
 <div style="display: flex; align-items: center;">
-    <img src="https://i.ibb.co/WfLyyHX/OSCP.png" alt="OSCP Logo" width="40" style="vertical-align:middle; margin-right: 10px;"/> 
+    <img src="https://i.ibb.co/BGZ0m85/64202aac2dccd1679829676-oscp.jpg" alt="OSCP Logo" width="40" style="vertical-align:middle; margin-right: 10px;"/> 
     <strong>OSCP</strong> - Offensive Security Certified Professional
 </div>
 <div style="display: flex; align-items: center; margin-top: 10px;">
