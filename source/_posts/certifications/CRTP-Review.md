@@ -17,6 +17,13 @@ The Lab instance can be accessed via vpn or via guacamole on browser. I personal
 The exam can be started anytime from the student dashboard and after couple of confirmation the exam environment gets created and we can start our exam. The exam is `24 hours` and not protocored. We are given 5 target machines which are spread across different domains or forest. The goal of the exam to obtain `OS Command Execution` on all 5 of them excluding the initial workstation where we are given low privilege access. One thing to remember is that we will not be given any tools on the initial workstation and all the required tools need to be manually transferred. There will be a folder specifically excluded from `Windows Defender` where we can transfer our tools so they won't get flagged by `Defender`. Remember all the machines will have defender enabled so it is our job to `disable` or `bypass` windows defender using various techniques taught in the course. I started my exam at `8 AM` nepali time and had achieved `OS Command execution` on all 5 machines before `3 PM`. If you have followed the course content, watched every video and took good notes the exam is relatively straightforward. Next day I created a fine report spending 5-6 hours and submitted the report. On `Wednesday August 23, 2023` I received email on my inbox that I had successfully cleared the examination.
 ![](https://i.ibb.co/Gvh0Gw3/resul.png)
 
-I was very happy in passing the examination but I was more proud that I learnt alot from this course. The learning never stops.
+## Conclusion
+Completing this course was a fantastic learning experience for me. The hands-on labs, detailed walkthroughs, and comprehensive content truly deepened my understanding of Active Directory security. The exam was very straightforward, and successfully passing it was a rewarding milestone. Overall, the course significantly enhanced my skills in red teaming and Active Directory pentesting. I highly recommend it to anyone looking to specialize in Active Directory security.
 
 ![](https://i.ibb.co/VWz4324/cert.png)
+
+## Some Tips
+- Take detailed note of every attack
+- Do not rely on a single tool
+- Prepare a solid methodology and follow accordingly
+- Go through the lab at least 2-3 times
