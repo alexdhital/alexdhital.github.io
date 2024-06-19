@@ -1,7 +1,7 @@
 ---
 cover: https://i.ibb.co/8sSpR83/CRTP.png
 title: CRTP Short Review
-date: 09/14/2023 09:45:47 +07:00
+date: 09/18/2023 09:45:47 +07:00
 categories: certification-review
 tags: [CRTP, Active Directory, altered security]
 ---
