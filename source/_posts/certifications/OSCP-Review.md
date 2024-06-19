@@ -1,7 +1,7 @@
 ---
 cover: https://i.ibb.co/m4VrZK6/OSCP.png
 title: OSCP and Penetration Testing mindset
-date: 6/14/2024 09:45:47 +07:00
+date: 12/14/2022 09:45:47 +07:00
 categories: certification-review
 tags: [OSCP, PEN-200, Offsec]
 ---
