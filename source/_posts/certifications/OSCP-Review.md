@@ -8,7 +8,7 @@ tags: [OSCP, PEN-200, Offsec]
 
 # OSCP and Penetration Testing mindset
 
-![](https://i.ibb.co/9v0TvzV/oscp-certificate.png)
+![](https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/56608366)
 
 ## Overview
 While I passed my OSCP back in August, 2022. In this blog post I specifically wanted to reflect on the mindset and strategy which offsec helped to develop for conducting a successful penetration test against an organization. This article will not be specifically about the course, lab or the exams as there are alot of other articles on the internet regarding those but rather a unique psychological aspect behind an adversial thinking and how OSCP helped in developing that mindset. 
