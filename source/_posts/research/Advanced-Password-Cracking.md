@@ -1,6 +1,6 @@
 ---
 cover: https://i.postimg.cc/XYBPQrL8/passw-ord-cracking.png
-title: Advanced Password Cracking': Techniques and Tools for Red Teamers and Pentesters
+title: "Advanced Password Cracking: Techniques and Tools for Red Teamers and Pentesters"
 date: 7/18/2024 9:30:00 +06:00
 categories: research
 tags: [Password Cracking, Hashcat]
