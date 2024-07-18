@@ -16,7 +16,7 @@ Whether you're a penetration tester, red teamer, CTF player, or cybersecurity en
 ## Cracking Hashes with Wordlists
 Two of the most sort after tools when it comes to password cracking is [Hashcat](https://hashcat.net/hashcat/) and [John The Ripper](https://www.openwall.com/john/). As with the recent [2024rockyou.txt](https://github.com/hkphh/rockyou2024.txt) which is approximately 160 GB, It can significantly enchance the capability of successfully cracking password hashes. Lets take an example during a penetration test we successfully dumped ntlm hash from one of the workstations of a user via same old `sekurlsa::logonpasswords`. We can simply use hashcat and try every single combination of password in the worslist. Hashcat will convert every single password candidate into its ntlm format and compare with our given hash value. Below `-a` is the attack mode and `-m` is the hash mode.
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[~]
 └─$ hashcat -a 0 -m 1000 hash /usr/share/wordlists/rockyou.txt --show
 
@@ -28,17 +28,17 @@ If the hash is unknown [hashcat example hashes](https://hashcat.net/wiki/doku.ph
 ## Cracking hashes with wordlists and rules
 Organizations often use password combinations of `{OrganizationName}{Year}` like `Microsoft2024`. In my college the WIFI password as well as all the student workstation password was `Islington2024`. Rules are ways of manipluating or extending the base words in a wordlist that are common habits for users or organizations. For example the word `Islington` may exist in wordlist we can extend this by replacing with uppercase letters, character replacement eg: `S` => `$`, `a` => `@`, prepending characters like `!Islington` or appending characters like `Islington2024`.
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[~]
 └─$ hashcat -a 0 -m 1000 hash.txt /usr/share/wordlists/rockyou.txt -r rules/add-year.rule
 
 ```
 
-[!TIP] Hashcat ships with lots of rule files in the rules directory that we can use.
+**Note:** Hashcat ships with lots of rule files in the rules directory that we can use.
 
 We can create our own rules. [hashcat-rules](https://hashcat.net/wiki/doku.php?id=rule_based_attack) Lets imagine a scenario we are on a penetration test for a company `astrosoft`. From open source intelligence or previous data breach we found that they might be using characters like `@`, `$`, `0` and `year` appended for most of their passwords. We can simply create a rule file as below
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ cat rules/company.rule 
 c sa@ so0 ss$ $2$0$2$4
@@ -46,7 +46,7 @@ c sa@ so0 ss$ $2$0$2$4
 
 Above `c` is to capitalize the first letter, `sa@` means to substitute a with @, `so0` means to substitute o with 0 and append `2024` at the end. `36CFEC3D295BDC66AE9DBD059E498C12` this will be the ntlm hash which I will be cracking with some custom made wordlists as below.
 
-```Kali                                                                                                                                                                                        
+```bash                                                                                                                                                                                        
 ┌──(alex㉿kali)-[/tmp]
 └─$ cat wordlists.txt 
 summer
@@ -59,7 +59,7 @@ shampoo
 ```
 Using hashcat with the custom generated rules we siccessfully cracked the hash to retrieve plaintext password as `A$tr0$0ft2024`.
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 0 -m 1000 ntlm-hash.txt wordlists.txt -r rules/company.rule --show
 
@@ -69,7 +69,7 @@ Using hashcat with the custom generated rules we siccessfully cracked the hash t
 ## Cracking hashes with wordlists and masks
 Masks are subset of bruteforce attacks where we know the position of characterset in pasword. Let's suppose we have ntlm hash of a user `59FC0F884922B4CE376051134C71E22C`, During reconnaissance phase we found that according to company policy the user accounts passwords is 9 characters in total, should begin with an uppercase character followed by 5 lowercase characters followed by 3 digits. We can use masks attacks in hashcat as below. This attack is usually very fast.
 
-```Kali                     
+```bash                    
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 3 -m 1000 hash.txt ?u?l?l?l?l?l?d?d?d --show
 
@@ -78,7 +78,7 @@ Masks are subset of bruteforce attacks where we know the position of characterse
 
 We can also set custom characterset for example: for the hash `07FCF2503320D74A55DE1E53EF835DB0` we know that the password length will be 7 characters last two characters can be either a digit or a special character we can create our custom characterset like we create a custom charset 1 which resembles either a digit or a special character.
 
-```Kali                         
+```bash                        
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 3 -m 1000 hash.txt -1 ?d?s ?u?l?l?l?l?l?1 --show
 
@@ -86,7 +86,7 @@ We can also set custom characterset for example: for the hash `07FCF2503320D74A5
 ```
 In above scenario we knew the password length but what if we didnot know the length of password beforehand. We just know that maximum password length is 12, password starts with uppercase letter and may contain digits or special characters at the end.  We can create a custom `.hcmask` file with different lengths. eg `test.hcmask`
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ cat test.hcmask                                   
 
@@ -100,7 +100,7 @@ In above scenario we knew the password length but what if we didnot know the len
 ```
 Above, We generated an `hcmask` file with different lengths upto total length 12. Suppose our ntlm hash is `1501F896CAE1FD4F0BF6B9593E81DEA3`. We know that the maximum password length is 12 can be less, initial character is uppercase followed by lowercase letters and digit or special character at end. We can use hashcat with above hcmask file.
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 3 -m 1000 hash.txt test.hcmask --show
 
@@ -108,7 +108,7 @@ Above, We generated an `hcmask` file with different lengths upto total length 12
 ```
 We can also define static string in masks suppose we find out the password includes the company name so we can create a mask as 
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ cat company.hcmask 
 Astrosoft?d
@@ -120,7 +120,7 @@ Astrosoft?d?d?d?d?d
 ## Hashcat Hybrid attacks
 The attack mode 6 and 7 are used for combination of wordlists and masks. For example while bruteforcing ntlm hash we need to append `?d?d?d?d` digits at the end of each word in the wordlist using attack mode 6 we can do so as below.
 
-```Kali                      
+```bash                     
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 6 -m 1000 ntlm-hash.txt /usr/share/wordlists/rockyou.txt ?d?d?d?d --show
 
@@ -128,7 +128,7 @@ The attack mode 6 and 7 are used for combination of wordlists and masks. For exa
 ```
 Similarly if we want to prepend any character, digits or special characters with wordlists we can use attack mode 7 to do so.
 
-```Kali
+```bash
 ┌──(alex㉿kali)-[/tmp]
 └─$ hashcat -a 7 -m 1000 ntlm-hash.txt /usr/share/wordlists/rockyou.txt ?d?d?d?d --show
 
