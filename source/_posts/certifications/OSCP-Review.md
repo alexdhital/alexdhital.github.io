@@ -4,6 +4,8 @@ title: OSCP and Penetration Testing mindset
 date: 12/14/2022 09:45:47 +07:00
 categories: certification-review
 tags: [OSCP, PEN-200, Offsec]
+toc: true
+toc_number: false
 ---
 
 # OSCP and Penetration Testing mindset
