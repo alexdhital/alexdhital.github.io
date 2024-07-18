@@ -23,7 +23,7 @@ Completing this course was a fantastic and enjoyable learning experience for me.
 
 ![](https://i.ibb.co/VWz4324/cert.png)
 
-[!TIP] Some Tips
+ ## Some Tips
 - Be patient do not rush the exam is very straightforward
 - Take detailed note of every attack and command
 - Do not rely on a single tool
