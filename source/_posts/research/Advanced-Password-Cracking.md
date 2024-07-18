@@ -135,3 +135,34 @@ Similarly if we want to prepend any character, digits or special characters with
 
 E137D7C5AF09F19AC20158E8AC271FFA:2024winter
 ```
+## Converting Password-Protected Files to Hashes for Cracking with John the Ripper
+Often we find files such as zip archive, KeePass kdbx files, PDF files, MS office files, ssh private keys, etherium wallet files, etc which are encrypted and required valid password to access them. [*2john suite](https://github.com/openwall/john/tree/bleeding-jumbo/run) has collection of scripts which can be used to convert these encrypted files into respective hash format which can then be passed to [John The Ripper](https://www.openwall.com/john/) for cracking. John will automatically identity the hash format and attempt to crack it using our supplied wordlist. Below are some examples of converting these encrypted files to hash formats and cracking them using John the Ripper:
+
+```bash
+zip2john protected.zip > ziphash.txt
+john --wordlist=wordlist.txt ziphash.txt
+```
+```bash
+keepass2john database.kdbx > keepasshash.txt
+john --wordlist=wordlist.txt keepasshash.txt
+```
+```bash
+pdf2john.pl protected.pdf > pdfhash.txt
+john --wordlist=wordlist.txt pdfhash.txt
+```
+```bash
+office2john protected.docx > officehash.txt
+john --wordlist=wordlist.txt officehash.txt
+```
+```bash
+ssh2john id_rsa > sshhash.txt
+john --wordlist=wordlist.txt sshhash.txt
+```
+```bash
+ethereum2john wallet.json > ethhash.txt
+john --wordlist=wordlist.txt ethhash.txt
+```
+```bash
+mozilla2john key3.db > mozillahash.txt
+john --wordlist=wordlist.txt mozillahash.txt
+```
