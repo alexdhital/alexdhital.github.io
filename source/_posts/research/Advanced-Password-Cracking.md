@@ -153,27 +153,27 @@ john --wordlist=wordlist.txt keepasshash.txt
 pdf2john.pl protected.pdf > pdfhash.txt
 john --wordlist=wordlist.txt pdfhash.txt
 ```
-4. MS Office Files
+4. **MS Office Files**
 ```bash
 office2john protected.docx > officehash.txt
 john --wordlist=wordlist.txt officehash.txt
 ```
-5. SSH Private Key
+5. **SSH Private Key**
 ```bash
 ssh2john id_rsa > sshhash.txt
 john --wordlist=wordlist.txt sshhash.txt
 ```
-6. Etherium Wallet Files
+6. **Etherium Wallet Files**
 ```bash
 ethereum2john wallet.json > ethhash.txt
 john --wordlist=wordlist.txt ethhash.txt
 ```
-7. Mozilla Firefox Master Password
+7. **Mozilla Firefox Master Password**
 ```bash
 mozilla2john key3.db > mozillahash.txt
 john --wordlist=wordlist.txt mozillahash.txt
 ```
-8. LUKS Encrypted Partition
+8. **LUKS Encrypted Partition**
 ```bash
 luks2john /dev/sdaX > lukshash.txt
 john --wordlist=wordlist.txt lukshash.txt
