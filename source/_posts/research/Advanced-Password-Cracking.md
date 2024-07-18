@@ -16,7 +16,7 @@ Whether you're a penetration tester, red teamer, CTF player, or cybersecurity en
 ## Cracking Hashes with Wordlists
 Two of the most sort after tools when it comes to password cracking is [Hashcat](https://hashcat.net/hashcat/) and [John The Ripper](https://www.openwall.com/john/). As with the recent [2024rockyou.txt](https://github.com/hkphh/rockyou2024.txt) which is approximately 160 GB, It can significantly enchance the capability of successfully cracking password hashes. Lets take an example during a penetration test we successfully dumped ntlm hash from one of the workstations of a user via same old `sekurlsa::logonpasswords`. We can simply use hashcat and try every single combination of password in the worslist. Hashcat will convert every single password candidate into its ntlm format and compare with our given hash value. Below `-a` is the attack mode and `-m` is the hash mode.
 
-```bash
+```zsh
 ┌──(alex㉿kali)-[~]
 └─$ hashcat -a 0 -m 1000 hash /usr/share/wordlists/rockyou.txt --show
 
