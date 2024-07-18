@@ -9,12 +9,12 @@ toc_number: false
 ---
 
 ## OverView
-Whether you're a penetration tester, red teamer, CTF player, or cybersecurity enthusiast, you're likely familiar with the concept of password cracking. It is a vital skill for any offensive security practitioner. In the past, passwords were often stored in plaintext or with weak hashing algorithms like MD5. Back then, it was common to dump a database via SQL injection, feed the hashes into CrackStation.net, and easily recover the plaintext passwords. Remember those days? Well password hashing and encryption have come a long way since then with algorithms and better practices making the process more challenging. During penetration tests or red team engagements it is common that we may find various hashes which may include MD5, NTLM, SHA-256, Bcrypt, etc.
+Whether you're a penetration tester, red teamer, CTF player, or cybersecurity enthusiast, you're likely familiar with the concept of password cracking. It is a vital skill for any offensive security practitioner. In the past, passwords were often stored in plaintext or with weak hashing algorithms like MD5. Back then, it was common to dump a database via SQL injection, feed the hashes into [](crackstation.net), and easily recover the plaintext passwords. Remember those days? Well password hashing and encryption have come a long way since then with algorithms and better practices making the process more challenging. During penetration tests or red team engagements it is common that we may find various hashes which may include MD5, NTLM, SHA-256, Bcrypt, etc.
 
 ***Note:*** Encoding is the process of converting a data from one format to another usually for storing or transferring data in proper format. It is not for ensuring protection of data. Encryption is the process of converting a plaintext information into ciphertext using an algorithm and a key. This ciphertext can then be decrypted back using the same key. Hashing is the process of converting data into a fixed size characters/values using a hash function which is irreversble meaning it cannot be converted back to original message. The only way is to verify the hash is to compare it to a new hash of the same data.
 
 ## Cracking Hashes with Wordlists
-Two of the most sort after tools when it comes to password cracking is [Hashcat](https://hashcat.net/hashcat/) and [John The Ripper](https://www.openwall.com/john/). As with the recent [2024rockyou.txt](https://github.com/hkphh/rockyou2024.txt) which is approximately 160 GB, It can significantly enchance the capability of successfully cracking password hashes. Lets take an example during a penetration test we successfully dumped ntlm hash from one of the workstations of a user via same old `sekurlsa::logonpasswords`. We can simply use hashcat and try every single combination of password in the worslist. Hashcat will convert every single password candidate into its ntlm format and compare with our given hash value. Below `-a` is the attack mode and `-m` is the hash mode.
+Two of the most sought after tools when it comes to password cracking is [Hashcat](https://hashcat.net/hashcat/) and [John The Ripper](https://www.openwall.com/john/). As with the recent [Rockyou2024.txt](https://github.com/hkphh/rockyou2024.txt) which is approximately 160 GB, It can significantly enchance the capability of successfully cracking password hashes. Lets take an example during a penetration test we successfully dumped ntlm hash from one of the workstations of a user via same old `sekurlsa::logonpasswords`. We can simply use hashcat and try every single combination of password in the worslist. Hashcat will convert every single password candidate into its ntlm format and compare with our given hash value if a match is found the password is cracked. Below `-a` is the attack mode and `-m` is the hash mode.
 
 ```bash
 ┌──(alex㉿kali)-[~]
@@ -37,7 +37,7 @@ Organizations often use password combinations of `{OrganizationName}{Year}` like
 
 **Note:** Hashcat ships with lots of rule files in the rules directory that we can use.
 
-We can create our own rules. [hashcat-rules](https://hashcat.net/wiki/doku.php?id=rule_based_attack) Lets imagine a scenario we are on a penetration test for a company `astrosoft`. From open source intelligence or previous data breach we found that they might be using characters like `@`, `$`, `0` and `year` appended for most of their passwords. We can simply create a rule file as below
+We can create our own rules. [hashcat-rules](https://hashcat.net/wiki/doku.php?id=rule_based_attack) Lets imagine a scenario we are on a penetration test for a company `astrosoft`. From open source intelligence or previous data breach we found that they might be using characters like `@` in place of `a`, `$` in place of `s`, `0` in place of `o` and `year` appended for most of their passwords. We can simply create a rule file as below.
 
 ```bash
 ┌──(alex㉿kali)-[~]
@@ -58,7 +58,7 @@ astrosoft
 Safe
 shampoo
 ```
-Using hashcat with the custom generated rules we siccessfully cracked the hash to retrieve plaintext password as `A$tr0$0ft2024`.
+Using hashcat with the custom generated rules we successfully cracked the hash to retrieve plaintext password as `A$tr0$0ft2024`.
 
 ```bash
 ┌──(alex㉿kali)-[~]
@@ -77,7 +77,7 @@ Masks are subset of bruteforce attacks where we know the position of characterse
 59fc0f884922b4ce376051134c71e22c:Qwerty123
 ```
 
-We can also set custom characterset for example: for the hash `07FCF2503320D74A55DE1E53EF835DB0` we know that the password length will be 7 characters last two characters can be either a digit or a special character we can create our custom characterset like we create a custom charset 1 which resembles either a digit or a special character.
+We can also set custom characterset for example: for the hash `07FCF2503320D74A55DE1E53EF835DB0` we know that the password length will be 7 characters last two characters can be either a digit or a special character. We can create our custom characterset like we create a custom charset 1 which resembles either a digit or a special character.
 
 ```bash                        
 ┌──(alex㉿kali)-[~]
@@ -99,7 +99,7 @@ In above scenario we knew the password length but what if we didnot know the len
 ?d?s,?u?l?l?l?l?l?l?l?l?l?1
 ?d?s,?u?l?l?l?l?l?l?l?l?l?l?1
 ```
-Above, We generated an `hcmask` file with different lengths upto total length 12. Suppose our ntlm hash is `1501F896CAE1FD4F0BF6B9593E81DEA3`. We know that the maximum password length is 12 can be less, initial character is uppercase followed by lowercase letters and digit or special character at end. We can use hashcat with above hcmask file.
+Above, We generated an `hcmask` file with different lengths upto total length 12. Suppose our ntlm hash is `1501F896CAE1FD4F0BF6B9593E81DEA3`. We know that the maximum password length is 12 or can be less, initial character is uppercase followed by lowercase letters and digit or special character at end. We can use hashcat with above hcmask file.
 
 ```bash
 ┌──(alex㉿kali)-[~]
@@ -107,7 +107,7 @@ Above, We generated an `hcmask` file with different lengths upto total length 12
 
 1501F896CAE1FD4F0BF6B9593E81DEA3:Christopher1
 ```
-We can also define static string in masks suppose we find out the password includes the company name so we can create a mask as 
+We can also define static string in masks suppose we find out the password includes the company name with digits appended but we donot know the length of digits in thise case we can create a mask as below. 
 
 ```bash
 ┌──(alex㉿kali)-[~]
