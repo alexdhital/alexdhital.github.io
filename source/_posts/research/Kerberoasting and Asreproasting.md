@@ -11,7 +11,7 @@ toc_number: false
 
 Welcome to my three-part blog series! In this first part, I'll dive deep into how Kerberos works and take a closer look at Kerberoasting and ASREPRoasting attacks. In the next part, we'll explore Kerberos delegation, some of the architectural and design issues in Kerberos, and how attackers can exploit these weaknesses. The final part will be about Shadow Credentials.
 
-Kerberos is one of the main authentication protocols in Active Directory, along with NTLM and LDAP. It's considered secure because it uses tickets to authenticate clients and servers, avoiding the need to store passwords locally. Plus, it involves a trusted third party, the Key Distribution Center (KDC), which also acts as the domain controller and uses built-in symmetric cryptography. However, as with any security system, Kerberos isn't perfect and has its vulnerabilities.
+Kerberos is one of the main authentication protocols in Active Directory, along with NTLM and LDAP. It's considered secure because it uses tickets to authenticate clients and servers, avoiding the need to store passwords locally. Plus, it involves a trusted third party, the Key Distribution Center (KDC), which also acts as the domain controller and uses built-in symmetric cryptography. However, as with any security system, Kerberos isn't perfect and has its vulnerabilities. We will be using (Rubeus)[https://github.com/GhostPack/Rubeus] throughout this blog which is one of the most sought after tool when it comes to attacking Kerberos.
 
 # Kerberos Working
 
