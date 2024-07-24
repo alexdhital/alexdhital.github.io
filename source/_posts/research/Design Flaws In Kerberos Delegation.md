@@ -60,4 +60,6 @@ C:\Users\Alex> C:\Tools\SharpSystemTriggers\SharpSpoolTrigger\bin\Release\SharpS
 
 
 # Constrained Delegation
+
+
 Due to problem in unconstrained delegation and emerging attaks microsoft released constrained delegation instead of a server configured to delegate a user's credentials to any services, in constrained delegation a server is allowed to delegate the user's credential only to a specific server. eg the web server is only allowed to delegate the user's credential to database server. Here the server configured with constrained delegation does not cache a user's TGT in its memory. The server instead uses its own TGT to request for service ticket on behalf of a user.
