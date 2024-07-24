@@ -103,7 +103,7 @@ We can now list shares on dc$ or psexec to gain system access.
 ```powershell
 C:\Users\Alex> ls \\dc.dev.dhitalcorp.local\c$
 ```
-Alternatively instead of cifs we could also request for service ticket for ldap and perform dcsync as
+Alternatively instead of cifs we could also request for service ticket for ldap and perform dcsync or request service ticket for HTTP for powershell remoting.
 
 # Constrained Delegation
 
