@@ -109,3 +109,14 @@ Alternatively instead of cifs we could also request for service ticket for ldap 
 ![Constrained Delegation](https://i.postimg.cc/8Cdhjccb/constrained.jpg)
 
 Due to problem in unconstrained delegation and emerging attaks microsoft released constrained delegation instead of a server configured to delegate a user's credentials to any services, in constrained delegation a server is allowed to delegate the user's credential only to a specific server. eg the web server is only allowed to delegate the user's credential to database server. Here the server configured with constrained delegation does not cache a user's TGT in its memory. The server instead uses its own TGT to request for service ticket on behalf of a user.
+
+## Working
+- First the client will authenticate to a web application using form based authentication.
+-  The web server computer will request **S4U2Self Ticket** for itself on behalf of the client from the KDC.
+-  The web server computer will again send this **S4U2Self Ticket** to the KDC and request **S4U2Proxy Ticket** for CIFS service on behalf of the client.
+-  The KDC will check the web server computer's `msDS-AllowedToDelegateTo` property and if CIFS service is listed, it will send **S4U2Proxy Ticket** for CIFS service on behalf of the client.
+-  The web server computer will then use this **S4U2Proxy Ticket** to access CIFS server on behalf of the client.
+
+## Problem with this architecture
+Since its sole responsibility of server configured with constrained delegation to request service ticket for configured service eg: cifs on behalf of a user, but the server doesnot check for which user. Meaning if we compromise a server with constrained delegation we can request service ticket for the configured service on behalf of any user. We can access the cifs service as domain administrator as well.
+
