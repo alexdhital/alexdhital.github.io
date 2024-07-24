@@ -20,6 +20,11 @@ The main problem with unconstrained delegation is that any user who accesses the
 
 # Exploiting Unconstrained Delegation
 First we need to identify computers setup for Unconstrained Delegation on the domain. We can use PowerView or Rubeus.
-```
+```powershell
 PS C:\Users\Alex> Get-DomainComputer -UnConstrained
+
+Name               : APP01$
+DistinguishedName  : CN=APP01,OU=Application Servers,DC=dev,DC=dhitalcorp,DC=local
+OperatingSystem    : Windows Server 2016 Standard
+Unconstrained      : True
 ```
