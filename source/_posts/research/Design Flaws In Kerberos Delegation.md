@@ -19,3 +19,7 @@ When a user wants to access a service eg: **HTTP** the client will ask for **Ser
 The main problem with unconstrained delegation is that any user who accesses the web application, the web server computer will cache their TGT in its memory. So if we have administrator access on web server computer we can extract TGT of every user who accessed the web application. Another interesting aspect to unconstrained delegation is that it will cache the user’s TGT regardless of which service is being accessed by the user from that computer. So, if an admin or user accesses a file share or any other service from that machine, their TGT will be cached.
 
 # Exploiting Unconstrained Delegation
+First we need to identify computers setup for Unconstrained Delegation on the domain. We can use PowerView or Rubeus.
+```
+PS C:\Users\Alex> Get-DomainComputer -UnConstrained
+```
