@@ -106,6 +106,6 @@ C:\Users\Alex> ls \\dc.dev.dhitalcorp.local\c$
 Alternatively instead of cifs we could also request for service ticket for ldap and perform dcsync or request service ticket for HTTP for powershell remoting.
 
 # Constrained Delegation
-![Constrained Delegation](https://i.postimg.cc/sfPfZyD2/Constrained-drawio.png)
+![Constrained Delegation](https://i.postimg.cc/vmFz4WZk/constrained-drawio-1.png)
 
 Due to problem in unconstrained delegation and emerging attaks microsoft released constrained delegation instead of a server configured to delegate a user's credentials to any services, in constrained delegation a server is allowed to delegate the user's credential only to a specific server. eg the web server is only allowed to delegate the user's credential to database server. Here the server configured with constrained delegation does not cache a user's TGT in its memory. The server instead uses its own TGT to request for service ticket on behalf of a user.
