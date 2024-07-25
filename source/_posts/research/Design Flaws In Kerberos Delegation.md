@@ -250,3 +250,5 @@ Access the dc via psexec
 ```powershell
 C:\Users\Alex\Desktop> psexec.exe \\dc.dev.dhitalcorp.local cmd
 ```
+## Creating own computer account to exploit RBCD
+If we donot have local administrator on a computer we can simple create our own computer account. Regular domain users can create upto 10 machine accounts in the domain using [Stand]
