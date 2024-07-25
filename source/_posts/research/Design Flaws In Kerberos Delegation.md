@@ -183,3 +183,8 @@ Gain access using psexec
 C:\Users\Alex> psexec.exe \\dc.dev.dhitalcorp.local cmd
 ```
 
+# Resource Based Constrained Delegation
+In case of resource based constrained delegation, the delegation is setup on target/backend server via `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute. Meaning if web server needs to delegate credentials to backend database server, the delegation is setup on backend database server by database administrator or target service owner.
+
+## Abuse
+To exploit resource based constrained delegation if we have WriteProperty, GenericWrite, GenericAll or WriteDacl over a computer object we can set `msDS-AllowedToActOnBehalfOfOtherIdentity` on that computer ourselves. We will also need like an admin privilege on a domain joined computer or ability to join a machine to domain. Suppose we have admin access on `workstation-1$` and GenericWrite on `dc$`. On dc$ we can configure `PrincipalsAllowedToDelegateToAccount` attribute which means `workstation-1$` can access any service as any user on `dc$`.
