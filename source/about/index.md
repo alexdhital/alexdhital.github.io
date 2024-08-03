@@ -62,7 +62,7 @@ I am Alex Dhital, a passionate Penetration Tester and Red Teamer with a strong p
 
 <div style="display: flex; align-items: center; margin-top: 10px;">
     <img src="https://pbs.twimg.com/profile_images/1646266203961434112/RaNqQv9K_400x400.jpg" alt="Synack Red Team" width="50" height="50" style="margin-right: 10px;"/>
-    <strong>Synack Red Team</strong>
+    <strong>Synack Red Team January 2021 - August 2024</strong>
 </div>
 <p style="margin-top: 10px;">
     I joined the Synack Red Team in January 2021 after successfully completing  their rigorous vetting process, which included application, interview, initial assessments, and onboarding. I passed both the host and web assessments where i was allowed to test both host and web targets on the platform. As a student, Synack has allowed me to generate income in the form of bug bounties, providing a pay-for-skill opportunity. In my spare time, I enjoy hunting for bugs in web applications and conducting penetration testing on their host targets, I particularly enjoy testing internal host as well as web applications in the platform. Additionally, being part of a great community of elite hackers has enabled me to learn from and help other professionals in the field.
